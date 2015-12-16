@@ -9,4 +9,4 @@ trait Configure {
   def config(name: String): Config = config.getConfig(name)
 }
 
-object ConfigureFactory extends Configure 
+object ConfigureFactory extends Configure

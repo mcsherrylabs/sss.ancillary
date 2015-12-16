@@ -1,8 +1,7 @@
 package sss.ancillary
 
-import collection.JavaConverters._
-import scala.reflect.runtime.universe
-
+import scala.reflect.runtime.universe._
+import java.lang.reflect.{ Method, InvocationHandler, Proxy }
 /**
  * Factory to allow an instance to be created via reflection from the constructor
  * Pass in the correct params for the constructor.
@@ -27,14 +26,31 @@ object ReflectionUtils extends Logging {
   }
 
   def getInstance[T](objectName: String): T = {
-    import scala.reflect.runtime.universe
 
-    val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
+    val runtimeMirrorer = runtimeMirror(getClass.getClassLoader)
 
-    val module = runtimeMirror.staticModule(objectName)
+    val module = runtimeMirrorer.staticModule(objectName)
 
-    runtimeMirror.reflectModule(module).instance.asInstanceOf[T]
+    runtimeMirrorer.reflectModule(module).instance.asInstanceOf[T]
 
+  }
+
+  /**
+   * Create an interface instance powered by the passed invoker.
+   *
+   * @param invoker
+   * @tparam I
+   * @return
+   */
+  def createProxy[I: TypeTag](invoker: (Object, Method, Array[Object]) => Object): I = {
+
+    val m = runtimeMirror(getClass.getClassLoader)
+    val clazz = m.runtimeClass(typeOf[I])
+    Proxy.newProxyInstance(clazz.getClassLoader, Array(clazz), new InvocationHandler() {
+      override def invoke(proxy: Object, method: Method, args: Array[Object]) = {
+        invoker(proxy, method, args)
+      }
+    }).asInstanceOf[I]
   }
 
 }
