@@ -3,7 +3,7 @@ scalaVersion := "2.10.5"
 
 name := "sss-ancillary"
 
-version := "0.9.3"
+version := "0.9.4"
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
