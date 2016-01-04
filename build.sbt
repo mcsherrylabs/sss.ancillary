@@ -5,6 +5,10 @@ name := "sss-ancillary"
 
 version := "0.9.4"
 
+import org.scoverage.coveralls.Imports.CoverallsKeys._
+
+coverallsTokenFile := Some(".coveralls.yml")
+
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
