@@ -9,6 +9,9 @@ import java.lang.reflect.{ Method, InvocationHandler, Proxy }
  * WARN - Not good for multiple constructors, this will only
  * attempt to match the first constructor of a class.
  *
+  *
+  * THE REFLECTION API IS EXPERIMENTAL!!!!!
+  *
  */
 object ReflectionUtils extends Logging {
 
@@ -25,6 +28,13 @@ object ReflectionUtils extends Logging {
 
   }
 
+  /**
+    * WARN - occasionally throws runtime exceptions in 2.10
+    *
+    * @param objectName
+    * @tparam T
+    * @return
+    */
   def getInstance[T](objectName: String): T = {
 
     val runtimeMirrorer = runtimeMirror(getClass.getClassLoader)
