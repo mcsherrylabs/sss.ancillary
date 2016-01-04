@@ -11,4 +11,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.2.1"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
 
+libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 
