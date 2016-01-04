@@ -1,5 +1,5 @@
 
-//scalaVersion := "2.10.4"
+scalaVersion := "2.10.5"
 
 name := "sss-ancillary"
 
