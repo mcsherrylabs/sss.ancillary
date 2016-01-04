@@ -1,7 +1,9 @@
 package sss.ancillary
 
-import com.typesafe.config.Config
 import java.lang.reflect.Method
+
+import com.typesafe.config.Config
+
 import scala.reflect.runtime.universe._
 
 /**

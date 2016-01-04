@@ -1,7 +1,8 @@
 package sss.ancillary
 
+import java.lang.reflect.{InvocationHandler, Method, Proxy}
+
 import scala.reflect.runtime.universe._
-import java.lang.reflect.{ Method, InvocationHandler, Proxy }
 /**
  * Factory to allow an instance to be created via reflection from the constructor
  * Pass in the correct params for the constructor.

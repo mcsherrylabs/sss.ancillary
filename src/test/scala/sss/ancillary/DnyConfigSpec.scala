@@ -1,8 +1,9 @@
 
 package sss.ancillary
 
-import org.scalatest._
 import com.typesafe.config._
+import org.scalatest._
+
 import scala.collection.JavaConversions._
 
 trait MimicInterface {
