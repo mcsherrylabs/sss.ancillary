@@ -1,6 +1,8 @@
 
 package sss.ancillary
 
+import java.math.BigDecimal
+
 import com.typesafe.config._
 import org.scalatest._
 
@@ -46,6 +48,20 @@ class DynConfigSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
     assert(!sut1.equals(sut2))
     assert(sut1.hashCode == sut2.hashCode)
+
+  }
+
+  it should " support an option of config " in {
+
+    {
+      val sut1 = DynConfig.opt[MimicInterface]("notExists")
+      assert(sut1.isEmpty)
+    }
+    {
+      val sut2 = DynConfig.opt[MimicInterface]("dish")
+      assert(!sut2.isEmpty)
+      assert(sut2.get.estimatedCost === 10)
+    }
 
   }
 }

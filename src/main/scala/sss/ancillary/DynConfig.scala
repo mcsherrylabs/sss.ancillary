@@ -10,6 +10,12 @@ import scala.reflect.runtime.universe._
  * @author alan
  */
 object DynConfig {
+
+  def opt[T: TypeTag](configName: String): Option[T] = {
+    if(ConfigureFactory.config.hasPath(configName))  Option(apply[T](ConfigureFactory.config(configName)))
+    else None
+  }
+
   def apply[T: TypeTag](configName: String): T = {
     apply(ConfigureFactory.config(configName))
   }
