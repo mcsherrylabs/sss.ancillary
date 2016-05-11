@@ -5,6 +5,8 @@ name := "sss-ancillary"
 
 version := "0.9.7"
 
+parallelExecution in Test := false
+
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
