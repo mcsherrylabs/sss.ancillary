@@ -3,7 +3,7 @@ scalaVersion := "2.11.7"
 
 name := "sss-ancillary"
 
-version := "0.9.7"
+version := "0.9.8"
 
 parallelExecution in Test := false
 

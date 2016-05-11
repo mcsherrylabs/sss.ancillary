@@ -74,6 +74,8 @@ class ServerLauncher(serverConfig: ServerConfig, servletClasses : InitServlet*) 
 
   def stop = server.stop
 
+  def join = server.join
+
   def start = server.start
 
   private def makeInetAddress: InetSocketAddress = {
