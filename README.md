@@ -7,7 +7,7 @@ Orthogonal to and depended on by many projects
 ```
 resolvers += "stepsoft" at "http://nexus.mcsherrylabs.com/nexus/content/groups/public"
 
-libraryDependencies += "mcsherrylabs.com" %% "sss-ancillary" % "0.9.4"
+libraryDependencies += "mcsherrylabs.com" %% "sss-ancillary" % "0.9.7"
 ```
 
 Contains a few useful traits including Logging and typesafe config helpers as well as a few Reflection utilities. 
@@ -29,3 +29,5 @@ For example given the name of a Typesafe config it can map the values in that co
   assert(sut.name == "SomeCompany")
   assert(sut.ingredients.toSet == Set("potato", "bacon", "onion", "salt", "pepper"))
 ```  
+
+Now contains a ServerLauncher - useful for starting an embedded Jetty server.
