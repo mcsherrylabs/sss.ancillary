@@ -78,6 +78,10 @@ class ServerLauncher(serverConfig: ServerConfig, servletClasses : InitServlet*) 
 
   def start = server.start
 
+  def addServlet(servletDetails: InitServlet) = {
+    context.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
+  }
+
   private def makeInetAddress: InetSocketAddress = {
     hostAddressOpt match {
       case Some(host) => InetSocketAddress.createUnresolved(host, httpPort)

@@ -59,4 +59,21 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
     }
     server.stop
   }
+
+  "A http server " must " allow servlets to be added " in {
+    val server = ServerLauncher(port)
+    val toBeAdded = InitServlet(new TestServlet, "/testhttp/*")
+    server.start
+
+    intercept[Exception] {
+      new Resty().text(s"http://localhost:$port/testhttp/ping")
+    }
+
+    server.addServlet(toBeAdded)
+    assert(new Resty().text(s"http://localhost:$port/testhttp/ping").toString === "pong")
+
+    server.stop
+  }
+
+
 }
