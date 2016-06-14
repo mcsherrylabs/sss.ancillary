@@ -33,7 +33,7 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
 
   "A http(s) server " must " serve http and https requests " in {
 
-    val server = ServerLauncher(defaultHttpConfig, InitServlet(new TestServlet, "/testhttp/*"))
+    val server = ServerLauncher.singleContext(defaultHttpConfig, InitServlet(new TestServlet, "/testhttp/*"))
     server.start
     assert(new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping").toString === "pong")
     assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping").toString === "pong")
@@ -51,7 +51,7 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
       trustStoreLocation = defaultHttpConfig.keyStoreLocation,
       trustStorePass = defaultHttpConfig.trustStorePass)
 
-    val server = ServerLauncher(config, InitServlet(new TestServlet, "/testhttp/*"))
+    val server = ServerLauncher.singleContext(config, InitServlet(new TestServlet, "/testhttp/*"))
     server.start
     assert(new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping").toString === "pong")
     intercept[Exception] {
@@ -75,5 +75,17 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
     server.stop
   }
 
+  "A http server " must " allow multiple contexts to be added " in {
+    val server = ServerLauncher(defaultHttpConfig,
+      ServletContext("", "", InitServlet(new TestServlet, "/testhttp/*")),
+      ServletContext("/another", "somewhere", InitServlet(new TestServlet, "/testhttp2/*")))
+
+    server.start
+
+    assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping").toString === "pong")
+    assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/another/testhttp2/ping").toString === "pong")
+
+    server.stop
+  }
 
 }

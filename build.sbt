@@ -1,9 +1,9 @@
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 name := "sss-ancillary"
 
-version := "0.9.10"
+version := "0.9.11"
 
 parallelExecution in Test := false
 
