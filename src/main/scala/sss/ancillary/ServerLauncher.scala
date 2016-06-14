@@ -89,7 +89,13 @@ class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContex
 
   def start = server.start
 
-  def addServlet(servletDetails: InitServlet, contextPath: String = "") = {
+  def addServlet(servletDetails: InitServlet) = {
+    if(!contexts.isEmpty) {
+      contexts.head.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
+    } else throw new IllegalArgumentException(s"No contexts at all")
+  }
+
+  def addServlet(servletDetails: InitServlet, contextPath: String) = {
     contexts.find(holder => holder.getServletHandler.getServletContext.getContextPath == contextPath) match {
       case None => throw new IllegalArgumentException(s"No context exists for $contextPath")
       case Some(context) => context.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
