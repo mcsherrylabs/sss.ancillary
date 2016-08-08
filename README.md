@@ -7,7 +7,7 @@ Orthogonal to and depended on by many projects
 ```
 resolvers += "stepsoft" at "http://nexus.mcsherrylabs.com/nexus/content/groups/public"
 
-libraryDependencies += "mcsherrylabs.com" %% "sss-ancillary" % "0.9.8"
+libraryDependencies += "mcsherrylabs.com" %% "sss-ancillary" % "0.9.13"
 ```
 
 Contains a few useful traits including Logging and typesafe config helpers as well as a few Reflection utilities. 
