@@ -54,7 +54,7 @@ object Memento extends Configure with Logging {
   }
 
   /**
-   * Read the menento
+   * Read the memento
    */
   def read(id: String, groupId: Option[String] = None): Option[String] = {
 

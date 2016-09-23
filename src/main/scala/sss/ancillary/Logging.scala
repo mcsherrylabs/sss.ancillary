@@ -4,7 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 trait Logging {
-  lazy val log: Logger = LoggerFactory.getLogger(this.getClass());
+  lazy val log: Logger = LoggerFactory.getLogger(this.getClass())
 
 }
 

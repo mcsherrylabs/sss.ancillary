@@ -20,9 +20,9 @@ object DynConfig {
     apply(ConfigureFactory.config(configName))
   }
 
-  def apply[T: TypeTag](config: Config): T = {
+  private val ignore = Set("equals", "hashCode", "clone", "wait", "finalize", "getClass", "==")
 
-    val ignore = Set("equals", "hashCode", "clone", "wait", "finalize", "getClass", "==")
+  def apply[T: TypeTag](config: Config): T = {
 
     def invoker(proxy: Object, method: Method, args: Array[Object]): Object = {
       val name = method.getName
