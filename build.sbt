@@ -17,7 +17,7 @@ scalaVersion := "2.11.8"
 
 name := "sss-ancillary"
 
-version := "1.0"
+version := "1.1-SNAPSHOT"
 
 parallelExecution in Test := false
 
@@ -29,11 +29,13 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
 
-libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all-server" % "8.1.19.v20160209"
+// https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all-server
+libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all-server" % "8.2.0.v20160908"
+
 
 libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
-libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.0"
+libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.1"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
 
@@ -41,8 +43,8 @@ pomExtra := (
   <url>https://github.com/mcsherrylabs/sss.ancillary</url>
   <licenses>
     <license>
-      <name>MIT</name>
-      <url>https://opensource.org/licenses/MIT</url>
+      <name>GPL3</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
