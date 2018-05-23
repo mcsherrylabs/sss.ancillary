@@ -13,7 +13,7 @@ publishArtifact in Test := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.6"
 
 name := "sss-ancillary"
 
@@ -23,11 +23,11 @@ parallelExecution in Test := false
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
-libraryDependencies += "com.typesafe" % "config" % "1.2.1"
+libraryDependencies += "com.typesafe" % "config" % "1.3.3"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" 
 
-libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
+libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
 // https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all-server
 libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all-server" % "8.2.0.v20160908"
@@ -35,9 +35,10 @@ libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all-server" % "8.2
 
 libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
-libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.1"
+libraryDependencies += "org.scalatra" %% "scalatra" % "2.6.3"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
+// https://mvnrepository.com/artifact/org.scalatest/scalatest
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test
 
 pomExtra := (
   <url>https://github.com/mcsherrylabs/sss.ancillary</url>
