@@ -11,6 +11,8 @@ publishTo := {
 
 publishArtifact in Test := false
 
+organization := "com.mcsherrylabs"
+
 //sonatypeProfileName := "com.mcsherrylabs"
 
 scalaVersion := "2.12.6"
