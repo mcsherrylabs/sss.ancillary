@@ -1,17 +1,17 @@
 
 publishMavenStyle := true
 
-publishTo := {
+updateOptions := updateOptions.value.withGigahorse(false)
+
+/*publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+}*/
 
 publishArtifact in Test := false
-
-organization := "com.mcsherrylabs"
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
@@ -19,7 +19,7 @@ scalaVersion := "2.12.6"
 
 name := "sss-ancillary"
 
-version := "1.1-SNAPSHOT"
+version := "1.3"
 
 parallelExecution in Test := false
 
