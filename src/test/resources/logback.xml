@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="ERRFILE" class="ch.qos.logback.core.FileAppender">
+        <file>ancillary-test-logging.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="ERRFILE"/>
+    </root>
+    <logger name="sss.ancillary.Memento">
+        <level value="WARN"/>
+    </logger>
+    <logger name="org.eclipse.jetty">
+        <level value="WARN"/>
+    </logger>
+
+</configuration>

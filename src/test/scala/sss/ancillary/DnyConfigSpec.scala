@@ -6,7 +6,7 @@ import java.math.BigDecimal
 import com.typesafe.config._
 import org.scalatest._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait MimicInterface {
   val name: String
@@ -22,7 +22,7 @@ class DynConfigSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
     val sut = DynConfig[MimicInterface]("dish")
     assert(sut.name == "SomeCompany")
-    assert(sut.ingredients.toSet == Set("potato", "bacon", "onion", "salt", "pepper"))
+    assert(sut.ingredients.asScala.toSet == Set("potato", "bacon", "onion", "salt", "pepper"))
     assert(sut.estimatedCost == 10)
   }
 

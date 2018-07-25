@@ -1,17 +1,15 @@
 package sss.ancillary
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.typesafe.scalalogging.Logger
 
 trait Logging {
-  lazy val log: Logger = LoggerFactory.getLogger(this.getClass())
-
+  lazy val log: Logger = Logger(this.getClass())
 }
 
 object LogFactory extends Logging {
 
   def getLogger(category: String): Logger = {
-    LoggerFactory.getLogger(category)
+    Logger(category)
   }
 
 }

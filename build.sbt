@@ -19,7 +19,7 @@ scalaVersion := "2.12.6"
 
 name := "sss-ancillary"
 
-version := "1.3"
+version := "1.4-SNAPSHOT"
 
 parallelExecution in Test := false
 
@@ -27,7 +27,9 @@ libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.3"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" 
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0"
+
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
