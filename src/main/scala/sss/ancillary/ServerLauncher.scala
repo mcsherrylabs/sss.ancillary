@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection
 import org.eclipse.jetty.server.{Connector, Server}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.util.ssl.SslContextFactory
+import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
 
 
 
@@ -82,6 +83,8 @@ class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContex
   }
 
   server.setHandler(contextCollection)
+
+  contexts.headOption foreach (WebSocketServerContainerInitializer.configureContext(_))
 
   def stop = server.stop
 
