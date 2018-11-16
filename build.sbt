@@ -19,7 +19,7 @@ scalaVersion := "2.12.6"
 
 name := "sss-ancillary"
 
-version := "1.4-SNAPSHOT"
+version := "1.4"
 
 parallelExecution in Test := false
 
@@ -33,8 +33,8 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
-// https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all-server
-libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all-server" % "8.2.0.v20160908"
+// https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all
+libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.14.v20181114" pomOnly()
 
 
 libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"

@@ -2,14 +2,14 @@ package sss.ancillary
 
 import java.io.File
 import java.net.InetSocketAddress
-import javax.servlet.Servlet
+import java.security.KeyStore
 
+import javax.servlet.Servlet
 import org.eclipse.jetty.server.handler.ContextHandlerCollection
-import org.eclipse.jetty.server.ssl.SslSocketConnector
 import org.eclipse.jetty.server.{Connector, Server}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.util.ssl.SslContextFactory
-import org.eclipse.jetty.webapp.WebAppContext
+
 
 
 
@@ -71,7 +71,7 @@ class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContex
   }
 
   import serverConfig._
-  server.setGracefulShutdown(gracefulShutdownMs)
+  server.setStopTimeout(gracefulShutdownMs)
   server.setStopAtShutdown(true)
 
   (useHttpConnector, useSslConnector) match {
@@ -130,16 +130,32 @@ class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContex
     require(Option(keyStorePass).isDefined && keyStorePass.length > 0, "The password may not be empty or null.")
     sslContextFactory.setKeyStorePassword(keyStorePass)
     require(new File(trustStoreLocation).isFile, s"Trust store location ($trustStoreLocation) must exist and be a file.")
-    sslContextFactory.setTrustStore(trustStoreLocation)
+
+    sslContextFactory.setTrustStorePath(trustStoreLocation)
 
     require(Option(trustStorePass).isDefined && trustStorePass.length > 0, "The password may not be empty or null.")
     sslContextFactory.setTrustStorePassword(trustStorePass)
     sslContextFactory.setNeedClientAuth(clientMustAuthenticate)
 
+    import org.eclipse.jetty.http.HttpVersion
+    import org.eclipse.jetty.server.HttpConnectionFactory
+    import org.eclipse.jetty.server.ServerConnector
+    import org.eclipse.jetty.server.SslConnectionFactory
+    import org.eclipse.jetty.server.SecureRequestCustomizer
+    import org.eclipse.jetty.server.HttpConfiguration
+    val http_config = new HttpConfiguration
+    http_config.setSecureScheme("https")
+    http_config.setSecurePort(8443)
+    http_config.setOutputBufferSize(32768)
+    val https_config = new HttpConfiguration(http_config)
+    val src = new SecureRequestCustomizer
+    src.setStsMaxAge(2000)
+    src.setStsIncludeSubDomains(true)
+    val https = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString), new HttpConnectionFactory(https_config))
+    https.setPort(httpsPort)
+    https.setIdleTimeout(500000)
     // create a https connector
-    val connector = new SslSocketConnector(sslContextFactory)
-    connector.setPort(httpsPort)
-    connector
+    https
   }
 
 
