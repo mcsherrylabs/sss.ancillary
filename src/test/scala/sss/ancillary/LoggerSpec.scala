@@ -5,14 +5,18 @@ import org.scalatest._
 
 import scala.io.Source
 
-class LoggerSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Logging {
+object LoggerSpec {
 
-
-
-  private def assertIsInLogFile(msg: String) = {
+  def assertIsInLogFile(msg: String) = {
     val fileContents = Source.fromFile("ancillary-test-logging.log").getLines.mkString
     assert(fileContents.contains(msg))
   }
+}
+class LoggerSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Logging {
+
+
+  import LoggerSpec.assertIsInLogFile
+
 
   "LogFactory " should " write to file " in {
     val m = LogFactory.getLogger("tag1")
