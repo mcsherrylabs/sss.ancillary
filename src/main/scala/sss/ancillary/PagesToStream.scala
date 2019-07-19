@@ -2,7 +2,9 @@ package sss.ancillary
 
 object PagesToStream {
 
-  def apply[T](f: (Long, Int) => Seq[T], pageSize: Int): Stream[T] = {
+  type Pager[T] = (Long, Int) => Seq[T]
+
+  def apply[T](f: Pager[T], pageSize: Int): Stream[T] = {
 
     require(pageSize > 0, s"Pagesize ($pageSize) must be greater than 0")
 

@@ -51,6 +51,10 @@ object Serialize {
     def extract(bs: Array[Byte]): (DeSerialized[t], Array[Byte])
   }
 
+  case object EmptySerializer extends ToBytes {
+    override def toBytes: Array[Byte] = Array.emptyByteArray
+  }
+
   case class StringSerializer(payload: String) extends ToBytes {
     override def toBytes: Array[Byte] = {
       val asBytes = payload.getBytes(StandardCharsets.UTF_8)
