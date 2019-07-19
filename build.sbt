@@ -15,7 +15,7 @@ publishArtifact in Test := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.8"
 
 name := "sss-ancillary"
 
