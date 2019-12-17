@@ -2,11 +2,10 @@ package sss.ancillary
 
 import java.io.File
 import java.net.InetSocketAddress
-import java.security.KeyStore
 
 import javax.servlet.Servlet
 import org.eclipse.jetty.server.handler.ContextHandlerCollection
-import org.eclipse.jetty.server.{Connector, Server}
+import org.eclipse.jetty.server.{Connector, Handler, Server}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
@@ -19,7 +18,10 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
   */
 case class InitServlet(servletCls: Servlet, path: String)
 case class ServletContext(contextPath: String ,
-                          resourceBase: String, servlets: InitServlet*)
+                          resourceBase: String, servlets: InitServlet*) {
+  def toHandler: ServletContextHandler = ServerLauncher.contextToHandler(this)
+
+}
 
 trait ServerConfig {
   val contextPath: String
@@ -53,82 +55,44 @@ case class DefaultServerConfig(contextPath: String = "/",
 
 
 object ServerLauncher {
-  def apply(serverConfig: ServerConfig, servletContexts: ServletContext*) : ServerLauncher = new ServerLauncher(serverConfig, servletContexts: _*)
-  def singleContext(serverConfig: ServerConfig, servletClasses : InitServlet*) : ServerLauncher = new ServerLauncher(serverConfig, ServletContext(serverConfig.contextPath,
-    serverConfig.resourceBase, servletClasses: _*))
 
-  def apply(port: Int, servletClasses : InitServlet*) : ServerLauncher = singleContext(DefaultServerConfig().copy(httpPort = port), servletClasses: _*)
-}
+  def contextToHandler(servletContext: ServletContext): ServletContextHandler = {
 
-class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContext*)  {
+    val context = new ServletContextHandler(ServletContextHandler.SESSIONS)
 
+    context.setContextPath(servletContext.contextPath)
+    context.setResourceBase(servletContext.resourceBase)
 
-  private val server: Server = new Server(makeInetAddress)
-  private val contexts = createContexts(servletContexts)
-  lazy private val contextCollection = {
-    val col = new ContextHandlerCollection
-    col.setHandlers(contexts.toArray)
-    col
-  }
-
-  import serverConfig._
-  server.setStopTimeout(gracefulShutdownMs)
-  server.setStopAtShutdown(true)
-
-  (useHttpConnector, useSslConnector) match {
-    case (true, true) => server.addConnector(createSslConnector)
-    case (false, true) => server.setConnectors(Array(createSslConnector))
-    case (true, false) =>
-    case (false, false) => throw new IllegalArgumentException("Use of both ssl and http connectors are false, at least one must be used")
-  }
-
-  server.setHandler(contextCollection)
-
-  contexts.headOption foreach (WebSocketServerContainerInitializer.configureContext(_))
-
-  def stop = server.stop
-
-  def join = server.join
-
-  def start = server.start
-
-  def addServlet(servletDetails: InitServlet) = {
-    if(!contexts.isEmpty) {
-      contexts.head.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
-    } else throw new IllegalArgumentException(s"No contexts at all")
-  }
-
-  def addServlet(servletDetails: InitServlet, contextPath: String) = {
-    contexts.find(holder => holder.getServletHandler.getServletContext.getContextPath == contextPath) match {
-      case None => throw new IllegalArgumentException(s"No context exists for $contextPath")
-      case Some(context) => context.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
+    servletContext.servlets foreach { servlet =>
+      context.addServlet(new ServletHolder(servlet.servletCls), servlet.path)
     }
+    context
   }
 
-  private def makeInetAddress: InetSocketAddress = {
-    hostAddressOpt match {
-      case Some(host) => InetSocketAddress.createUnresolved(host, httpPort)
-      case None => new InetSocketAddress(httpPort)
-    }
-  }
 
-  private def createContexts(servletContexts: Seq[ServletContext]): Seq[ServletContextHandler] = {
+  def singleContext(servletClasses : InitServlet*)(implicit serverConfig: ServerConfig) : Server = apply(ServletContext(serverConfig.contextPath,
+    serverConfig.resourceBase, servletClasses: _*).toHandler)
 
-    servletContexts map { servletContext =>
-      val context = new ServletContextHandler(ServletContextHandler.SESSIONS)
-      context.setContextPath(servletContext.contextPath)
-      context.setResourceBase(servletContext.resourceBase)
-      servletContext.servlets foreach { servlet =>
-        context.addServlet(new ServletHolder(servlet.servletCls), servlet.path)
-      }
-      context
+  def apply(port: Int, servletClasses : InitServlet*) : Server = singleContext(servletClasses: _*)(DefaultServerConfig().copy(httpPort = port))
+
+  def addSslConnector(implicit server: Server, serverConfig: ServerConfig): Unit = {
+    import serverConfig._
+    (useHttpConnector, useSslConnector) match {
+      case (true, true) => server.addConnector(createSslConnector(server))
+      case (false, true) => server.setConnectors(Array(createSslConnector(server)))
+      case (true, false) =>
+      case (false, false) => throw new IllegalArgumentException("Use of both ssl and http connectors are false, at least one must be used")
     }
 
   }
 
-  private def createSslConnector: Connector = {
+  def createSslConnector(server: Server)(implicit serverConfig: ServerConfig): Connector = {
+    import serverConfig._
+
     require(new File(keyStoreLocation).isFile, s"Key store location ($keyStoreLocation) must exist and be a file.")
-    val sslContextFactory = new SslContextFactory(keyStoreLocation)
+    val sslContextFactory = new SslContextFactory.Server() //new SslContextFactory(keyStoreLocation)
+
+    sslContextFactory.setKeyStorePath(keyStoreLocation)
 
     require(Option(keyStorePass).isDefined && keyStorePass.length > 0, "The password may not be empty or null.")
     sslContextFactory.setKeyStorePassword(keyStorePass)
@@ -141,11 +105,7 @@ class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContex
     sslContextFactory.setNeedClientAuth(clientMustAuthenticate)
 
     import org.eclipse.jetty.http.HttpVersion
-    import org.eclipse.jetty.server.HttpConnectionFactory
-    import org.eclipse.jetty.server.ServerConnector
-    import org.eclipse.jetty.server.SslConnectionFactory
-    import org.eclipse.jetty.server.SecureRequestCustomizer
-    import org.eclipse.jetty.server.HttpConfiguration
+    import org.eclipse.jetty.server.{HttpConfiguration, HttpConnectionFactory, SecureRequestCustomizer, ServerConnector, SslConnectionFactory}
     val http_config = new HttpConfiguration
     http_config.setSecureScheme("https")
     http_config.setSecurePort(8443)
@@ -161,5 +121,63 @@ class ServerLauncher(serverConfig: ServerConfig, servletContexts : ServletContex
     https
   }
 
+  def apply(hanlders : Handler*)(implicit serverConfig: ServerConfig): Server =  {
+
+    val server: Server = new Server(makeInetAddress)
+
+    if(hanlders.nonEmpty) {
+      lazy val contextCollection = {
+        val col = new ContextHandlerCollection
+        col.setHandlers(hanlders.toArray)
+        col
+      }
+
+      server.setHandler(contextCollection)
+      hanlders.collect{case s: ServletContextHandler => s} foreach (WebSocketServerContainerInitializer.configureContext)
+    }
+
+    server.setStopTimeout(serverConfig.gracefulShutdownMs)
+    server.setStopAtShutdown(true)
+
+
+    (serverConfig.useHttpConnector, serverConfig.useSslConnector) match {
+      case (true, true) => server.addConnector(createSslConnector(server))
+      case (false, true) => server.setConnectors(Array(createSslConnector(server)))
+      case (true, false) =>
+      case (false, false) => throw new IllegalArgumentException("Use of both ssl and http connectors are false, at least one must be used")
+    }
+
+
+    server
+  }
+
+
+  def makeInetAddress(implicit serverConfig: ServerConfig): InetSocketAddress = {
+    serverConfig.hostAddressOpt match {
+      case Some(host) => InetSocketAddress.createUnresolved(host, serverConfig.httpPort)
+      case None => new InetSocketAddress(serverConfig.httpPort)
+    }
+  }
+
+  def addServlet(servletDetails: InitServlet)(implicit server: Server):Unit = {
+    server.getHandlers.headOption.getOrElse(throw new IllegalArgumentException(s"No contexts at all")) match {
+      case s: ServletContextHandler => s.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
+      case s: ContextHandlerCollection => {
+        s.getHandlers.headOption.getOrElse(throw new IllegalArgumentException(s"No sub handler at all")) match {
+          case s: ServletContextHandler => s.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
+          case s => throw new IllegalArgumentException(s"Cannot add $servletDetails , $s is not a ServletContextHandler")
+        }
+      }
+      case s => throw new IllegalArgumentException(s"Cannot add $servletDetails , $s is not a ServletContextHandler")
+    }
+  }
+
+
+  def addServlet(servletDetails: InitServlet, contextPath: String)(implicit server: Server) = {
+    server.getHandlers.collect{ case s: ServletContextHandler => s}.find(holder => holder.getServletHandler.getServletContext.getContextPath == contextPath) match {
+      case None => throw new IllegalArgumentException(s"No context exists for $contextPath")
+      case Some(context) => context.addServlet(new ServletHolder(servletDetails.servletCls), servletDetails.path)
+    }
+  }
 
 }

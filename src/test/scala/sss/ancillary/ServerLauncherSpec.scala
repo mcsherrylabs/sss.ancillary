@@ -33,7 +33,7 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
 
   "A http(s) server " must " serve http and https requests " in {
 
-    val server = ServerLauncher.singleContext(defaultHttpConfig, InitServlet(new TestServlet, "/testhttp/*"))
+    val server = ServerLauncher.singleContext(InitServlet(new TestServlet, "/testhttp/*"))(defaultHttpConfig)
     server.start
     assert(new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping").toString === "pong")
     assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping").toString === "pong")
@@ -42,7 +42,7 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
 
   "A https-only server " must " only serve https requests " in {
 
-    val config = DefaultServerConfig().copy(
+    implicit val config = DefaultServerConfig().copy(
       useHttpConnector = false,
       useSslConnector = true,
       gracefulShutdownMs = 10,
@@ -51,17 +51,17 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
       trustStoreLocation = defaultHttpConfig.keyStoreLocation,
       trustStorePass = defaultHttpConfig.trustStorePass)
 
-    val server = ServerLauncher.singleContext(config, InitServlet(new TestServlet, "/testhttp/*"))
+    val server = ServerLauncher.singleContext(InitServlet(new TestServlet, "/testhttp/*"))
     server.start
     assert(new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping").toString === "pong")
     intercept[Exception] {
       new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping")
     }
-    server.stop
+    server.stop()
   }
 
   "A http server " must " allow servlets to be added " in {
-    val server = ServerLauncher(port)
+    implicit val server = ServerLauncher(port)
     val toBeAdded = InitServlet(new TestServlet, "/testhttp/*")
     server.start
 
@@ -69,23 +69,23 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
       new Resty().text(s"http://localhost:$port/testhttp/ping")
     }
 
-    server.addServlet(toBeAdded)
+    ServerLauncher.addServlet(toBeAdded)
     assert(new Resty().text(s"http://localhost:$port/testhttp/ping").toString === "pong")
 
-    server.stop
+    server.stop()
   }
 
   "A http server " must " allow multiple contexts to be added " in {
-    val server = ServerLauncher(defaultHttpConfig,
-      ServletContext("", "", InitServlet(new TestServlet, "/testhttp/*")),
-      ServletContext("/another", "somewhere", InitServlet(new TestServlet, "/testhttp2/*")))
+    val server = ServerLauncher(
+      ServletContext("", "", InitServlet(new TestServlet, "/testhttp/*")).toHandler,
+      ServletContext("/another", "somewhere", InitServlet(new TestServlet, "/testhttp2/*")).toHandler)(defaultHttpConfig)
 
     server.start
 
     assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping").toString === "pong")
     assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/another/testhttp2/ping").toString === "pong")
 
-    server.stop
+    server.stop()
   }
 
 }
