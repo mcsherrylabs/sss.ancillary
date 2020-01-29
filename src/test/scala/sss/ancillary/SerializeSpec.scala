@@ -1,13 +1,16 @@
 package sss.ancillary
 
+import java.io.{ByteArrayInputStream, InputStream}
+
+import com.google.common.io.ByteStreams
 import org.scalatest.{FlatSpec, Matchers}
 import sss.ancillary.Serialize._
 
 import scala.util.Random
 
 /**
-  * Created by alan on 2/11/16.
-  */
+ * Created by alan on 2/11/16.
+ */
 class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
 
   case class TestSerializerSimple(byteHeader: Byte,
@@ -30,25 +33,25 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
 
   def fromBytes(bytes: Array[Byte]): TestSeriliazer = {
     val extracted = bytes.extract(ByteDeSerialize,
-                                  LongDeSerialize,
-                                  StringDeSerialize,
-                                  IntDeSerialize,
-                                  SequenceDeSerialize,
-                                  ByteArrayDeSerialize,
-                                  BooleanDeSerialize,
-                                  ByteArrayRawDeSerialize)
+      LongDeSerialize,
+      StringDeSerialize,
+      IntDeSerialize,
+      SequenceDeSerialize,
+      ByteArrayDeSerialize,
+      BooleanDeSerialize,
+      ByteArrayRawDeSerialize)
 
     val s = extracted._5
     val recursiveSeq = s map fromBytes
 
     TestSeriliazer(extracted._1,
-                   recursiveSeq,
-                   extracted._2,
-                   extracted._3,
-                   extracted._4,
-                   extracted._6,
-                   extracted._7,
-                   extracted._8)
+      recursiveSeq,
+      extracted._2,
+      extracted._3,
+      extracted._4,
+      extracted._6,
+      extracted._7,
+      extracted._8)
   }
 
   case class TestSeriliazer(byteHeader: Byte,
@@ -59,7 +62,7 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
                             byteArray: Array[Byte],
                             isTrue: Boolean,
                             byteArrayNoHeader: Array[Byte])
-      extends ByteArrayComparisonOps {
+    extends ByteArrayComparisonOps {
     def toBytes: Array[Byte] = {
       (ByteSerializer(byteHeader) ++
         LongSerializer(longVal) ++
@@ -73,19 +76,19 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
 
     def checkFields(that: TestSeriliazer): Boolean = {
       byteHeader == that.byteHeader &&
-      tricky == that.tricky &&
-      longVal == that.longVal &&
-      someString == that.someString &&
-      intVal == that.intVal &&
-      byteArray.isSame(that.byteArray) &&
-      byteArrayNoHeader.isSame(that.byteArrayNoHeader) &&
-      isTrue == that.isTrue
+        tricky == that.tricky &&
+        longVal == that.longVal &&
+        someString == that.someString &&
+        intVal == that.intVal &&
+        byteArray.isSame(that.byteArray) &&
+        byteArrayNoHeader.isSame(that.byteArrayNoHeader) &&
+        isTrue == that.isTrue
     }
 
     override def equals(obj: scala.Any): Boolean = {
       obj match {
         case that: TestSeriliazer => checkFields(that)
-        case _                    => false
+        case _ => false
       }
     }
 
@@ -96,7 +99,8 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
                                  someString: String,
                                  intVal: Int,
                                  byteArray: Array[Byte],
-                                 byteArrayNoHeader: Array[Byte])
+                                 byteArrayNoHeader: Array[Byte],
+                                 inputStream: InputStream)
 
   val bHeader = 1.toByte
   val bHeader2 = 2.toByte
@@ -116,36 +120,39 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
     r
   }
 
+  val inputStream = new ByteArrayInputStream(byteArrayNoHeader)
+
   val test = TestSeriliazer(bHeader,
-                            Seq(),
-                            longVal,
-                            someString,
-                            intVal,
-                            byteArray,
-                            true,
-                            byteArrayNoHeader)
+    Seq(),
+    longVal,
+    someString,
+    intVal,
+    byteArray,
+    true,
+    byteArrayNoHeader)
   val test2 = TestSeriliazer(bHeader2,
-                             Seq(test),
-                             longVal,
-                             someString,
-                             intVal,
-                             byteArray,
-                             false,
-                             byteArrayNoHeader)
+    Seq(test),
+    longVal,
+    someString,
+    intVal,
+    byteArray,
+    false,
+    byteArrayNoHeader)
   val test3 = TestSeriliazer(bHeader3,
-                             Seq(test, test2),
-                             longVal,
-                             someString,
-                             intVal,
-                             byteArray,
-                             true,
-                             byteArrayNoHeader)
+    Seq(test, test2),
+    longVal,
+    someString,
+    intVal,
+    byteArray,
+    true,
+    byteArrayNoHeader)
   val test4 = SimpleTestSerilizer(bHeader4,
-                                  longVal,
-                                  someString,
-                                  intVal,
-                                  byteArray,
-                                  byteArrayNoHeader)
+    longVal,
+    someString,
+    intVal,
+    byteArray,
+    byteArrayNoHeader,
+    inputStream)
 
   "The serializer " should " make it easy to serialize common types " in {
 
@@ -154,21 +161,26 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
       StringSerializer(test4.someString) ++
       IntSerializer(test4.intVal) ++
       ByteArraySerializer(test4.byteArray) ++
+      InputStreamSerializer(test4.inputStream) ++
       ByteArrayRawSerializer(test4.byteArrayNoHeader)
 
-    val deserialised = bytes.toBytes.extract(ByteDeSerialize,
-                                             LongDeSerialize,
-                                             StringDeSerialize,
-                                             IntDeSerialize,
-                                             ByteArrayDeSerialize,
-                                             ByteArrayRawDeSerialize)
+    val deserialised = bytes.toBytes.extract(
+      ByteDeSerialize,
+      LongDeSerialize,
+      StringDeSerialize,
+      IntDeSerialize,
+      ByteArrayDeSerialize,
+      InputStreamDeSerialize,
+      /*RAW ARY MUST GO LAST*/ ByteArrayRawDeSerialize)
 
     assert((deserialised._1) == bHeader4)
     assert((deserialised._2) == longVal)
     assert((deserialised._3) == someString)
     assert((deserialised._4) == intVal)
     assert(byteArray isSame deserialised._5)
-    assert(byteArrayNoHeader isSame deserialised._6)
+    val retrieved = ByteStreams.toByteArray(deserialised._6)
+    assert(byteArrayNoHeader isSame retrieved)
+    assert(byteArrayNoHeader isSame deserialised._7)
 
   }
 
@@ -196,9 +208,9 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
       StringSerializer("")).toBytes
 
     val extracted = bytes.extract(StringDeSerialize,
-                                  StringDeSerialize,
-                                  StringDeSerialize,
-                                  StringDeSerialize)
+      StringDeSerialize,
+      StringDeSerialize,
+      StringDeSerialize)
     assert(extracted._1 === "")
     assert(extracted._2 === "Not empty")
     assert(extracted._3 === "")
@@ -222,7 +234,7 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
       One.tupled(bs.extract(
         OptionDeSerialize(IntDeSerialize),
         OptionDeSerialize(ByteArrayRawDeSerialize(deSer))
-        )
+      )
       )
     }
 
@@ -261,7 +273,7 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
 
   it should "serialize maps " in {
 
-    val sut = ((0 to 10) map {i:Int => s"BLAH$i" -> i}).toMap
+    val sut = ((0 to 10) map { i: Int => s"BLAH$i" -> i }).toMap
 
     val asBytes = MapSerializer(sut, StringSerializer, IntSerializer).toBytes
 

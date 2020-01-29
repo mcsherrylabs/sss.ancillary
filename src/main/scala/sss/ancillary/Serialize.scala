@@ -1,8 +1,10 @@
 package sss.ancillary
 
+import java.io.{ByteArrayInputStream, InputStream}
 import java.nio.charset.StandardCharsets
 
 import TupleOps._
+import com.google.common.io.ByteStreams
 import com.google.common.primitives._
 /**
   * Copyright Stepping Stone Software Ltd. 2016, all rights reserved.
@@ -30,6 +32,7 @@ object Serialize {
     val payload: T
   }
 
+  case class InputStreamDeSerialized(payload: InputStream) extends DeSerialized[InputStream]
   case class BooleanDeSerialized(payload: Boolean) extends DeSerialized[Boolean]
   case class StringDeSerialized(payload: String) extends DeSerialized[String]
   case class ShortDeSerialized(payload: Short) extends DeSerialized[Short]
@@ -61,6 +64,19 @@ object Serialize {
       val len = asBytes.length
       require(len < Short.MaxValue, "Cant serialise a long string")
       Shorts.toByteArray(len.toShort) ++ asBytes
+    }
+  }
+
+  /**
+   * Does not close the inputStream
+   *
+   * @param payload
+   */
+  case class InputStreamSerializer(payload: InputStream) extends ToBytes {
+    override def toBytes: Array[Byte] = {
+      val ary = ByteStreams.toByteArray(payload)
+      val len = ary.size
+      Ints.toByteArray(len) ++ ary
     }
   }
 
@@ -241,6 +257,17 @@ object Serialize {
       val len = Ints.fromByteArray(bytes)
       val (ary, returnBs) = rest.splitAt(len)
       (new DeSerialized[T] { val payload = (mapper(ary)) }, returnBs)
+    }
+  }
+
+  object InputStreamDeSerialize extends DeSerializeTarget {
+    type t = InputStream
+    override def extract(
+                          bs: Array[Byte]): (InputStreamDeSerialized, Array[Byte]) = {
+      val (bytes, rest) = bs.splitAt(4)
+      val len = Ints.fromByteArray(bytes)
+      val (ary, returnBs) = rest.splitAt(len)
+      (InputStreamDeSerialized(new ByteArrayInputStream(ary)), returnBs)
     }
   }
 
