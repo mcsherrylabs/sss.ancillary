@@ -1,6 +1,8 @@
 package sss.ancillary
 
+import java.util
 import java.util.UUID
+
 import ByteArrayEncodedStrOps.ByteArrayToBase64UrlStr
 
 object Guid {
@@ -23,6 +25,8 @@ case class Guid(value: Array[Byte]) {
     case that: Guid => value.sameElements(that.value)
     case _ => false
   }
+
+  override def hashCode(): Int = util.Arrays.hashCode(value)
 
   override def toString: String = value.toBase64Str
 }

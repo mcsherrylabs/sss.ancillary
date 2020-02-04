@@ -85,6 +85,8 @@ class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
         isTrue == that.isTrue
     }
 
+    override def hashCode(): Int = intVal
+
     override def equals(obj: scala.Any): Boolean = {
       obj match {
         case that: TestSeriliazer => checkFields(that)
