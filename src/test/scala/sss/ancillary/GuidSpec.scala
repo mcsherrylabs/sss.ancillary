@@ -24,5 +24,10 @@ class GuidSpec extends FlatSpec with Matchers {
     assert(!g.value.sameElements(g2.value) )
   }
 
+  it should "convert from and to String" in {
+    assert(Guid(g.toString).value.sameElements(g.value))
+    assert(Guid(g2.toString).value.sameElements(g2.value))
+    assert(!Guid(g2.toString).value.sameElements(g.value))
+  }
 
 }

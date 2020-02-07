@@ -3,10 +3,13 @@ package sss.ancillary
 import java.util
 import java.util.UUID
 
-import ByteArrayEncodedStrOps.ByteArrayToBase64UrlStr
+import ByteArrayEncodedStrOps._
 
 object Guid {
   val guidSize = 16
+
+  def apply(guidBase64Str: String): Guid =
+    Guid(guidBase64Str.fromBase64Str)
 
   def apply(): Guid = {
     import java.nio.ByteBuffer
