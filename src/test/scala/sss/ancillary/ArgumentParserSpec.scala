@@ -1,11 +1,11 @@
 package sss.ancillary
 
-import org.scalatest.{FlatSpec, Matchers}
-
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 /**
   * Created by alan on 2/11/16.
   */
-class ArgumentParserSpec extends FlatSpec with Matchers {
+class ArgumentParserSpec extends AnyFlatSpec with Matchers {
 
   "ArgumentParser" should "handle params with values and without" in {
 

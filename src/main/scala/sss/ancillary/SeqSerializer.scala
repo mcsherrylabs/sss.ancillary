@@ -6,7 +6,7 @@ import sss.ancillary.Serialize.{Serializer, ToBytes}
 
 object SeqSerializer extends Serializer[Iterable[Array[Byte]]] {
 
-  implicit class SeqToBytes[T <% ToBytes](val s: Seq[T]) extends ToBytes {
+  implicit class SeqToBytes[T](val s: Seq[T])(implicit ev: T => ToBytes) extends ToBytes {
     override def toBytes: Array[Byte] = SeqSerializer.toBytes(s map (_.toBytes))
   }
 

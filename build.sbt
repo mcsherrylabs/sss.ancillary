@@ -15,11 +15,13 @@ publishArtifact in Test := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.1"
 
 name := "sss-ancillary"
 
-version := "1.9-SNAPSHOT"
+version := "1.10-SNAPSHOT"
+
+crossScalaVersions := Seq("2.12.10", "2.13.1")
 
 parallelExecution in Test := false
 
@@ -39,12 +41,13 @@ libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.20.v20
 
 libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
-libraryDependencies += "org.scalatra" %% "scalatra" % "2.6.3"
+libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0-RC1" % Test
 
 libraryDependencies += "com.google.guava" % "guava" % "19.0"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+
 
 pomExtra := (
   <url>https://github.com/mcsherrylabs/sss.ancillary</url>

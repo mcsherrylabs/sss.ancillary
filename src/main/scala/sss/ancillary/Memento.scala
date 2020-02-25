@@ -81,7 +81,7 @@ object Memento extends Configure with Logging {
     groupId: Option[String] = None,
     async: Boolean = false): Option[Future[Any]] = {
 
-    def writeImpl {
+    def writeImpl: Unit = {
       val file = groupId match {
         case None => new File(mementoFolder, id)
         case Some(g) => {
