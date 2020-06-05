@@ -19,7 +19,7 @@ scalaVersion := "2.13.2"
 
 name := "sss-ancillary"
 
-version := "1.12"
+version := "1.13-SNAPSHOT"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 

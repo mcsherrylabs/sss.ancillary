@@ -31,6 +31,7 @@ trait ServerConfig {
   val contextPath: String
   val resourceBase: String
   val httpPort: Int
+  val httpConfidentialPort: Int
   val httpsPort: Int
   val useHttpConnector: Boolean
   val useSslConnector: Boolean
@@ -47,6 +48,7 @@ case class DefaultServerConfig(idleTimeoutMs: Int = 500000,
                                contextPath: String = "/",
                                resourceBase: String = "./",
                                httpPort: Int = 8080,
+                               httpConfidentialPort: Int = 8443,
                                httpsPort: Int = 8443,
                                useHttpConnector: Boolean = true,
                                useSslConnector: Boolean = false,
@@ -156,9 +158,7 @@ object ServerLauncher {
 
         val hs = hanlders.toArray.map { h =>
           if (!serverConfig.useHttpConnector) {
-            val redirectHandler = buildConstraintSecurityHandler
-            redirectHandler.setHandler(h)
-            redirectHandler
+            addSecurityConstraintSecurityToHandler(h)
           } else h
         }
 
@@ -191,7 +191,7 @@ object ServerLauncher {
   def createHttpConnector(server: Server)(implicit serverConfig: ServerConfig) = {
     val http_config = new HttpConfiguration();
     http_config.setSecureScheme(HttpScheme.HTTPS.asString());
-    http_config.setSecurePort(serverConfig.httpsPort)
+    http_config.setSecurePort(serverConfig.httpConfidentialPort)
     http_config.setOutputBufferSize(32768);
     // HTTP connector
     // The first server connector we create is the one for http, passing in the http configuration we configured
@@ -231,15 +231,16 @@ object ServerLauncher {
     }
   }
 
-  private def buildConstraintSecurityHandler: ConstraintSecurityHandler = {
+  def addSecurityConstraintSecurityToHandler(handler: Handler, pathSpec: String = "/*"): ConstraintSecurityHandler = {
     // this configures jetty to require HTTPS for all requests
     val constraint = new Constraint
     constraint.setDataConstraint(Constraint.DC_CONFIDENTIAL)
     val mapping = new ConstraintMapping
-    mapping.setPathSpec("/*")
+    mapping.setPathSpec(pathSpec)
     mapping.setConstraint(constraint)
     val security = new ConstraintSecurityHandler
     security.setConstraintMappings(Collections.singletonList(mapping))
+    security.setHandler(handler)
     security
   }
 }
