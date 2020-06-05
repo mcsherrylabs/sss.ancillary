@@ -3,7 +3,7 @@ package sss.ancillary
 import java.io.{File, IOException}
 import java.lang.management.ManagementFactory
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object Restarter {
   type AttemptRestart = () => Unit

@@ -11,6 +11,7 @@ import us.monoid.web.Resty
 class TestServlet extends ScalatraServlet {
 
   get("/ping") {
+    println(request.getRequestURL)
     "pong"
   }
 }
@@ -53,10 +54,11 @@ class  ServerLauncherSpec extends FlatSpec with Matchers {
 
     val server = ServerLauncher.singleContext(InitServlet(new TestServlet, "/testhttp/*"))
     server.start
-    assert(new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping").toString === "pong")
-    intercept[Exception] {
-      new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping")
-    }
+    val sslUri = s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping"
+    assert(new Resty().text(sslUri).toString === "pong")
+    val redirectResult =
+      new Resty().text(s"http://127.0.0.1:${defaultHttpConfig.httpPort}/testhttp/ping")
+    assert(redirectResult.location().toString === sslUri)
     server.stop()
   }
 

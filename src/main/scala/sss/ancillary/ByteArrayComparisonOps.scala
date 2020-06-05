@@ -13,7 +13,7 @@ import scala.collection.mutable
 trait ByteArrayComparisonOps {
 
   implicit class ByteArrayComparison(ary: Array[Byte]) {
-    def isSame(otherAry: mutable.WrappedArray[Byte]): Boolean = otherAry == ary.toSeq
+    def isSame(otherAry: mutable.ArraySeq[Byte]): Boolean = otherAry == ary.toSeq
     def hash: Int = ary.toSeq.hashCode()
   }
 

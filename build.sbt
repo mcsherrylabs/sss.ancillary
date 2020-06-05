@@ -15,13 +15,13 @@ publishArtifact in Test := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.2"
 
 name := "sss-ancillary"
 
-version := "1.10-SNAPSHOT"
+version := "1.12"
 
-crossScalaVersions := Seq("2.12.10", "2.13.1")
+crossScalaVersions := Seq(scalaVersion.toString())
 
 parallelExecution in Test := false
 
@@ -37,11 +37,11 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
 // https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all
 
-libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.20.v20190813" pomOnly()
+libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.29.v20200521" pomOnly()
 
 libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
-libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0-RC1" % Test
+libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0" % Test
 
 libraryDependencies += "com.google.guava" % "guava" % "19.0"
 

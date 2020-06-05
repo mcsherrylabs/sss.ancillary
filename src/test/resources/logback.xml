@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>[%.-1level %-28logger{0} %.28thread %d{HH:mm:ss.SSS}] %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="ERRFILE" class="ch.qos.logback.core.FileAppender">
         <file>ancillary-test-logging.log</file>
         <append>false</append>
@@ -14,12 +22,13 @@
 
     <root level="info">
         <appender-ref ref="ERRFILE"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
     <logger name="sss.ancillary.Memento">
         <level value="WARN"/>
     </logger>
     <logger name="org.eclipse.jetty">
-        <level value="WARN"/>
+        <level value="INFO"/>
     </logger>
 
 </configuration>
