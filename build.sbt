@@ -21,7 +21,7 @@ name := "sss-ancillary"
 
 version := "1.12"
 
-crossScalaVersions := Seq(scalaVersion.toString())
+//crossScalaVersions := Seq(scalaVersion.toString())
 
 parallelExecution in Test := false
 
