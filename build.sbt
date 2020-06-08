@@ -19,7 +19,7 @@ scalaVersion := "2.13.2"
 
 name := "sss-ancillary"
 
-version := "1.13-SNAPSHOT"
+version := "1.16-SNAPSHOT"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
@@ -27,7 +27,7 @@ parallelExecution in Test := false
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
-libraryDependencies += "com.typesafe" % "config" % "1.3.3"
+libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
@@ -43,7 +43,7 @@ libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
 libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0" % Test
 
-libraryDependencies += "com.google.guava" % "guava" % "19.0"
+libraryDependencies += "com.google.guava" % "guava" % "20.0"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
