@@ -41,7 +41,7 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
 libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.29.v20200521" pomOnly()
 
-libraryDependencies += "us.monoid.web" % "resty" % "0.3.2" % Test
+libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
 libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0" % Test
 
