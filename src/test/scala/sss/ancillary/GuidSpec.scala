@@ -2,12 +2,12 @@ package sss.ancillary
 
 import java.util.Date
 
-import org.scalatest.{FlatSpec, Matchers}
-
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 /**
   * Created by alan on 2/11/16.
   */
-class GuidSpec extends FlatSpec with Matchers {
+class GuidSpec extends AnyFlatSpec with Matchers {
 
   val g = Guid()
   val g2 = Guid()

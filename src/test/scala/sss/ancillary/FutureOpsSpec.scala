@@ -7,10 +7,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import LoggingFutureSupport.LoggingFuture
 import FutureOps._
 import LoggerSpec.assertIsInLogFile
+import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.util.{Failure, Success}
+import org.scalatest.matchers.should.Matchers
 
-class FutureOpsSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Logging {
+class FutureOpsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll with Logging {
 
   val errMsg = "LoggingFuture_FutureOpsSpec"
 

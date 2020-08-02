@@ -5,8 +5,10 @@ import java.math.BigDecimal
 
 import com.typesafe.config._
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait MimicInterface {
   val name: String
@@ -16,7 +18,7 @@ trait MimicInterface {
   val ingredients: java.lang.Iterable[String]
 }
 
-class DynConfigSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
+class DynConfigSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
 
   "DynConfig " should " be able to miminic an interface given a config name" in {
 

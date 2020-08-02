@@ -66,7 +66,7 @@ object Memento extends Configure with Logging {
     if (m.exists()) {
       val source = scala.io.Source.fromFile(m)
       try {
-        val lines = source.getLines
+        val lines = source.getLines()
         Some(lines.mkString(""))
       } finally { source.close }
     } else {

@@ -1,8 +1,9 @@
 package sss.ancillary
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatra.ScalatraServlet
 import us.monoid.web.Resty
+import org.scalatest.matchers.should.Matchers
 
 /**
   * Created by alan on 5/7/16.
@@ -16,7 +17,7 @@ class TestServlet extends ScalatraServlet {
   }
 }
 
-class  ServerLauncherSpec extends FlatSpec with Matchers {
+class  ServerLauncherSpec extends AnyFlatSpec with Matchers {
 
   Resty.ignoreAllCerts()
   val port = 9999

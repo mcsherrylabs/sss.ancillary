@@ -15,11 +15,13 @@ publishArtifact in Test := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
-scalaVersion := "2.13.2"
+scalaVersion := "2.13.3"
+
+javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.16-SNAPSHOT"
+version := "1.17-SNAPSHOT"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
@@ -39,14 +41,14 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
 libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.29.v20200521" pomOnly()
 
-libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
+libraryDependencies += "us.monoid.web" % "resty" % "0.3.2" % Test
 
 libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0" % Test
 
 libraryDependencies += "com.google.guava" % "guava" % "20.0"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.2" % Test
 
 
 pomExtra := (

@@ -2,17 +2,24 @@
 package sss.ancillary
 
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.io.Source
+import org.scalatest.matchers.should.Matchers
 
 object LoggerSpec {
 
   def assertIsInLogFile(msg: String) = {
-    val fileContents = Source.fromFile("ancillary-test-logging.log").getLines.mkString
+    val fileContents = {
+      val buffer = Source.fromFile("ancillary-test-logging.log")
+      val result = buffer.getLines().mkString
+      buffer.close()
+      result
+    }
     assert(fileContents.contains(msg))
   }
 }
-class LoggerSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Logging {
+class LoggerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll with Logging {
 
 
   import LoggerSpec.assertIsInLogFile

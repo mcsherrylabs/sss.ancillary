@@ -3,15 +3,16 @@ package sss.ancillary
 import java.io.{ByteArrayInputStream, InputStream}
 
 import com.google.common.io.ByteStreams
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.{FlatSpec, Matchers}
 import sss.ancillary.Serialize._
 
 import scala.util.Random
-
+import org.scalatest.matchers.should.Matchers
 /**
  * Created by alan on 2/11/16.
  */
-class SerializeSpec extends FlatSpec with Matchers with ByteArrayComparisonOps {
+class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOps {
 
   case class TestSerializerSimple(byteHeader: Byte,
                                   longVal: Long,

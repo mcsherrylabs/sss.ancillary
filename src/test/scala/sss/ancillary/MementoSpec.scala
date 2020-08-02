@@ -2,8 +2,9 @@
 package sss.ancillary
 
 import org.scalatest._
-
-class MementoSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+class MementoSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
 
   val msg = "Hello world, what's going on???"
 

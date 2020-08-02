@@ -123,6 +123,7 @@ object ServerLauncher {
     // see http://stackoverflow.com/questions/26382540/how-to-disable-the-sslv3-protocol-in-jetty-to-prevent-poodle-attack/26388531#26388531
     sslContextFactory.setExcludeProtocols("SSLv3")
 
+
     import org.eclipse.jetty.http.HttpVersion
     import org.eclipse.jetty.server.{HttpConfiguration, HttpConnectionFactory, SecureRequestCustomizer, ServerConnector, SslConnectionFactory}
     val http_config = new HttpConfiguration

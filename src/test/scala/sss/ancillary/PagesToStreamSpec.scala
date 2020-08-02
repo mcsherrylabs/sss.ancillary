@@ -1,13 +1,13 @@
 package sss.ancillary
 
-import org.scalatest.{FlatSpec, Matchers}
-
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 /**
   * Created by alan on 2/11/16.
   */
-class PagesToStreamSpec extends FlatSpec with Matchers {
+class PagesToStreamSpec extends AnyFlatSpec with Matchers {
 
-  def inifiniteNumberStream(number: Int): Stream[Int] = Stream.cons(number, inifiniteNumberStream(number + 1))
+  def inifiniteNumberStream(number: Int): LazyList[Int] = LazyList.cons(number, inifiniteNumberStream(number + 1))
 
   def pager(offset: Long, pageSize: Int): Seq[Int] = {
     //println(s"Calling pager with $offset")

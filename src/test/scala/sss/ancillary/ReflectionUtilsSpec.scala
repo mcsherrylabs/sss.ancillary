@@ -2,6 +2,8 @@
 package sss.ancillary
 
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 trait Marker {
   def getStr: String
@@ -15,7 +17,7 @@ trait PureInterface {
   def name: String
 }
 
-class ReflectionUtilsSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
+class ReflectionUtilsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
 
   "Util " should " be able to  load an object by name " in {
 
