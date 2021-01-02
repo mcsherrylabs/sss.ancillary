@@ -11,6 +11,24 @@ updateOptions := updateOptions.value.withGigahorse(false)
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }*/
 
+
+publishTo := {
+  val nexus = "https://nexus.mcsherrylabs.com/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "repository/snapshots")
+  else
+    Some("releases"  at nexus + "repository/releases")
+}
+
+credentials += sys.env.get("NEXUS_USER").map(userName => Credentials(
+  "Sonatype Nexus Repository Manager",
+  "nexus.mcsherrylabs.com",
+  userName,
+  sys.env.getOrElse("NEXUS_PASS", ""))
+).getOrElse(
+  Credentials(Path.userHome / ".ivy2" / ".credentials")
+)
+
 publishArtifact in Test := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
@@ -21,7 +39,7 @@ javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.17-SNAPSHOT"
+version := "1.18"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
