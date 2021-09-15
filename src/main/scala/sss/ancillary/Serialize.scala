@@ -32,6 +32,17 @@ object Serialize {
     val payload: T
   }
 
+  object SerializerOps {
+
+    implicit final class Serialize[T](private val t: T) extends AnyVal {
+      def serialize(implicit s: Serializer[T]): Array[Byte] = s.toBytes(t)
+    }
+
+    implicit final class Deserialize(private val bytes: Array[Byte]) extends AnyVal {
+      def deserialize[T](implicit s: Serializer[T]): T = s.fromBytes(bytes)
+    }
+  }
+
   case class InputStreamDeSerialized(payload: InputStream) extends DeSerialized[InputStream]
   case class BooleanDeSerialized(payload: Boolean) extends DeSerialized[Boolean]
   case class StringDeSerialized(payload: String) extends DeSerialized[String]

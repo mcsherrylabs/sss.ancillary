@@ -3,6 +3,8 @@ publishMavenStyle := true
 
 updateOptions := updateOptions.value.withGigahorse(false)
 
+organization := "com.mcsherrylabs"
+
 /*publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
@@ -29,7 +31,7 @@ credentials += sys.env.get("NEXUS_USER").map(userName => Credentials(
   Credentials(Path.userHome / ".ivy2" / ".credentials")
 )
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
@@ -39,11 +41,11 @@ javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.18"
+version := "1.21"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
-parallelExecution in Test := false
+Test / parallelExecution  := false
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 

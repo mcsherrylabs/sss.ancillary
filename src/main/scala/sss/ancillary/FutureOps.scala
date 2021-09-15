@@ -27,11 +27,10 @@ object FutureOps {
     def await(d: Duration = 10.seconds): T = {
       Await.result(f, d)
     }
-  }
 
-  implicit class AwaitReady[T](val f: Future[T]) extends AnyVal {
     def toTry(d: Duration = 10.seconds): Try[T] = {
-      Await.ready(f, d).value.get
+      Try(Await.result(f, d))
     }
   }
+
 }
