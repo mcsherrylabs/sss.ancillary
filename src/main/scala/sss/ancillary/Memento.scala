@@ -1,7 +1,6 @@
 package sss.ancillary
 
-import java.io.File
-import java.io.PrintWriter
+import java.io.{File, PrintWriter}
 import scala.concurrent._
 
 /**
@@ -23,8 +22,8 @@ trait DefaultMemento {
 class Memento(id: String, groupId: Option[String] = None) {
 
   def read: Option[String] = Memento.read(id, groupId)
-  def write(memento: String, async: Boolean = false): Option[Future[Any]] = Memento.write(id, memento, groupId, async)
-  def clear = Memento.clear(id, groupId)
+  def write(memento: String): Unit = Memento.write(id, memento, groupId)
+  def clear: Boolean = Memento.clear(id, groupId)
 
 }
 
@@ -37,20 +36,20 @@ object Memento extends Configure with Logging {
 
   private lazy val mementoFolder = {
     val folder = new File(config.getString(s"memento.folder"))
-    if ((!folder.exists() && !folder.isDirectory() && !folder.mkdirs()))
+    if (!folder.exists() && !folder.isDirectory && !folder.mkdirs())
       throw new RuntimeException("Cannot create memento folder, permissions?")
     log.info(s"The memento root folder is ${folder.getAbsolutePath}")
     folder
   }
 
 
-  def clear(id: String, groupId: Option[String] = None) = {
+  def clear(id: String, groupId: Option[String] = None): Boolean = {
     val m = groupId match {
       case None => new File(mementoFolder, id)
       case Some(g) => new File(new File(mementoFolder, g), id)
     }
 
-    if (m.exists()) { m.delete }
+    if (m.exists()) m.delete else false
   }
 
   /**
@@ -74,38 +73,33 @@ object Memento extends Configure with Logging {
     }
   }
 
+
   /**
    * Write the memento
    */
   def write(id: String, memento: String,
-    groupId: Option[String] = None,
-    async: Boolean = false): Option[Future[Any]] = {
+            groupId: Option[String] = None,
+           ): Unit = {
 
-    def writeImpl: Unit = {
-      val file = groupId match {
-        case None => new File(mementoFolder, id)
-        case Some(g) => {
-          val grouIdFolder = new File(mementoFolder, g)
-          if ((!grouIdFolder.exists() && !grouIdFolder.isDirectory() && !grouIdFolder.mkdirs()))
-            throw new RuntimeException(s"Cannot create group Id folder ${grouIdFolder}")
-          new File(grouIdFolder, id)
-        }
+    val file = groupId match {
+      case None => new File(mementoFolder, id)
+      case Some(g) => {
+        val grouIdFolder = new File(mementoFolder, g)
+        if ((!grouIdFolder.exists() && !grouIdFolder.isDirectory && !grouIdFolder.mkdirs()))
+          throw new RuntimeException(s"Cannot create group Id folder ${grouIdFolder}")
+        new File(grouIdFolder, id)
       }
-
-      log.debug(s"writing ${memento} to ${file}")
-      val out = new PrintWriter(file, "UTF-8")
-      try { out.print(memento) }
-      finally { out.close }
     }
 
-    if (async) {
-      import ExecutionContext.Implicits.global
-      Some(Future { writeImpl })
-    } else {
-      writeImpl
-      None
+    log.debug(s"writing ${memento} to ${file}")
+    val out = new PrintWriter(file, "UTF-8")
+    try {
+      out.print(memento)
     }
-
+    finally {
+      out.close()
+    }
   }
+
 
 }
