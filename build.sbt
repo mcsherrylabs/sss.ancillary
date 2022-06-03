@@ -41,7 +41,7 @@ javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.22"
+version := "1.23-SNAPSHOT"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
