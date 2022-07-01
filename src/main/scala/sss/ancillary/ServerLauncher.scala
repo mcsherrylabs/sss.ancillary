@@ -1,15 +1,15 @@
 package sss.ancillary
 
+import javax.servlet.Servlet
+
 import java.io.File
 import java.net.InetSocketAddress
 import java.util.Collections
-
-import javax.servlet.Servlet
 import org.eclipse.jetty.server.handler.ContextHandlerCollection
-import org.eclipse.jetty.server.{Connector, Handler, HttpConfiguration, HttpConnectionFactory, SecureRequestCustomizer, Server, ServerConnector}
+import org.eclipse.jetty.server.{Connector, Handler, HttpConfiguration, HttpConnectionFactory, Server, ServerConnector}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.util.ssl.SslContextFactory
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
+import org.eclipse.jetty.websocket.server.config.JettyWebSocketServletContainerInitializer
 import org.eclipse.jetty.http.HttpScheme
 import org.eclipse.jetty.security.{ConstraintMapping, ConstraintSecurityHandler}
 import org.eclipse.jetty.util.security.Constraint
@@ -169,7 +169,7 @@ object ServerLauncher {
 
 
       server.setHandler(contextCollection)
-      hanlders.collect { case s: ServletContextHandler => s } foreach (WebSocketServerContainerInitializer.configureContext)
+      hanlders.collect { case s: ServletContextHandler => s } foreach (JettyWebSocketServletContainerInitializer.configure(_, null))
     }
 
     server.setStopTimeout(serverConfig.gracefulShutdownMs)

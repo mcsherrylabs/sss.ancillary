@@ -5,6 +5,8 @@ updateOptions := updateOptions.value.withGigahorse(false)
 
 organization := "com.mcsherrylabs"
 
+val JettyVer = "10.0.11"
+
 /*publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
@@ -41,7 +43,7 @@ javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.23-SNAPSHOT"
+version := "1.24"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
@@ -59,13 +61,16 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
 // https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all
 
-libraryDependencies += "org.eclipse.jetty.aggregate" % "jetty-all" % "9.4.29.v20200521" pomOnly()
+libraryDependencies += "org.eclipse.jetty" % "jetty-server" % JettyVer
+
+libraryDependencies += "org.eclipse.jetty.websocket" % "websocket-jetty-server" % JettyVer
 
 libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
-libraryDependencies += "org.scalatra" %% "scalatra" % "2.7.0" % Test
+libraryDependencies += "org.scalatra" %% "scalatra" % "2.8.2" % Test
 
 libraryDependencies += "com.google.guava" % "guava" % "20.0"
+
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.2" % Test
