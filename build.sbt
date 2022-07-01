@@ -51,15 +51,11 @@ Test / parallelExecution  := false
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
-libraryDependencies += "com.typesafe" % "config" % "1.4.0"
+libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
-
-libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
-
-// https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11"
 
 libraryDependencies += "org.eclipse.jetty" % "jetty-server" % JettyVer
 
@@ -69,8 +65,7 @@ libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
 libraryDependencies += "org.scalatra" %% "scalatra" % "2.8.2" % Test
 
-libraryDependencies += "com.google.guava" % "guava" % "20.0"
-
+libraryDependencies += "com.google.guava" % "guava" % "31.1-jre"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.2" % Test
