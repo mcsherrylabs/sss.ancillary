@@ -55,7 +55,9 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11"
+libraryDependencies += "ch.qos.logback" % "logback-core" % "1.2.11"
+
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.3.0-alpha16"
 
 libraryDependencies += "org.eclipse.jetty" % "jetty-server" % JettyVer
 
@@ -69,6 +71,7 @@ libraryDependencies += "com.google.guava" % "guava" % "31.1-jre"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.2" % Test
+
 
 
 pomExtra := (

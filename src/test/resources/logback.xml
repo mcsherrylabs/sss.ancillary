@@ -20,7 +20,7 @@
         </filter>
     </appender>
 
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="ERRFILE"/>
         <appender-ref ref="CONSOLE"/>
     </root>
