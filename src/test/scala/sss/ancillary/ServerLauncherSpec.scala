@@ -17,7 +17,7 @@ class TestServlet extends ScalatraServlet {
   }
 }
 
-class  ServerLauncherSpec extends AnyFlatSpec with Matchers {
+class ServerLauncherSpec extends AnyFlatSpec with Matchers {
 
   Resty.ignoreAllCerts()
   val port = 9999
@@ -25,21 +25,23 @@ class  ServerLauncherSpec extends AnyFlatSpec with Matchers {
 
   "A http only server " must " only serve http requests " in {
     val server = ServerLauncher(port, InitServlet(new TestServlet, "/testhttp/*"))
+    server.setStopTimeout(0)
     server.start
     assert(new Resty().text(s"http://localhost:$port/testhttp/ping").toString === "pong")
     intercept[Exception] {
       new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping")
     }
-    server.stop
+    server.stop()
   }
 
   "A http(s) server " must " serve http and https requests " in {
 
     val server = ServerLauncher.singleContext(InitServlet(new TestServlet, "/testhttp/*"))(defaultHttpConfig)
+    server.setStopTimeout(0)
     server.start
     assert(new Resty().text(s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping").toString === "pong")
     assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping").toString === "pong")
-    server.stop
+    server.stop()
   }
 
   "A https-only server " must " only serve https requests " in {
@@ -54,6 +56,7 @@ class  ServerLauncherSpec extends AnyFlatSpec with Matchers {
       trustStorePass = defaultHttpConfig.trustStorePass)
 
     val server = ServerLauncher.singleContext(InitServlet(new TestServlet, "/testhttp/*"))
+    server.setStopTimeout(0)
     server.start
     val sslUri = s"https://127.0.0.1:${defaultHttpConfig.httpsPort}/testhttp/ping"
     assert(new Resty().text(sslUri).toString === "pong")
@@ -66,6 +69,7 @@ class  ServerLauncherSpec extends AnyFlatSpec with Matchers {
   "A http server " must " allow servlets to be added " in {
     implicit val server = ServerLauncher(port)
     val toBeAdded = InitServlet(new TestServlet, "/testhttp/*")
+    server.setStopTimeout(0)
     server.start
 
     intercept[Exception] {
@@ -82,7 +86,7 @@ class  ServerLauncherSpec extends AnyFlatSpec with Matchers {
     val server = ServerLauncher(
       ServletContext("", "", InitServlet(new TestServlet, "/testhttp/*")).toHandler,
       ServletContext("/another", "somewhere", InitServlet(new TestServlet, "/testhttp2/*")).toHandler)(defaultHttpConfig)
-
+    server.setStopTimeout(0)
     server.start
 
     assert(new Resty().text(s"http://localhost:${defaultHttpConfig.httpPort}/testhttp/ping").toString === "pong")
