@@ -4,7 +4,6 @@ import java.io.{ByteArrayInputStream, InputStream}
 
 import com.google.common.io.ByteStreams
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.{FlatSpec, Matchers}
 import sss.ancillary.Serialize._
 
 import scala.util.Random

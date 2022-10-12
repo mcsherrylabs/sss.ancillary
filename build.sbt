@@ -7,28 +7,19 @@ organization := "com.mcsherrylabs"
 
 val JettyVer = "10.0.11"
 
-/*publishTo := {
-  val nexus = "https://oss.sonatype.org/"
+publishTo := Some {
+  val sonaUrl = "https://oss.sonatyoe.org/"
   if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
+    "snapshots" at sonaUrl + "content/repositories/snapshots"
   else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}*/
-
-
-publishTo := {
-  val nexus = "https://nexus.mcsherrylabs.com/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "repository/snapshots")
-  else
-    Some("releases"  at nexus + "repository/releases")
+    "releases" at sonaUrl + "service/local/staging/deploy/maven2"
 }
 
-credentials += sys.env.get("NEXUS_USER").map(userName => Credentials(
+credentials += sys.env.get("SONA_USER").map(userName => Credentials(
   "Sonatype Nexus Repository Manager",
-  "nexus.mcsherrylabs.com",
+  "oss.sonatype.org",
   userName,
-  sys.env.getOrElse("NEXUS_PASS", ""))
+  sys.env.getOrElse("SONA_PASS", ""))
 ).getOrElse(
   Credentials(Path.userHome / ".ivy2" / ".credentials")
 )
@@ -37,13 +28,13 @@ Test / publishArtifact := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.9"
 
 javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.24"
+version := "1.25"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
@@ -55,9 +46,9 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "ch.qos.logback" % "logback-core" % "1.2.11"
+libraryDependencies += "ch.qos.logback" % "logback-core" % "1.4.4"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.3.0-alpha16"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.4"
 
 libraryDependencies += "org.eclipse.jetty" % "jetty-server" % JettyVer
 
@@ -70,8 +61,7 @@ libraryDependencies += "org.scalatra" %% "scalatra" % "2.8.2" % Test
 libraryDependencies += "com.google.guava" % "guava" % "31.1-jre"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.2" % Test
-
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % Test
 
 
 pomExtra := (
