@@ -5,10 +5,12 @@ updateOptions := updateOptions.value.withGigahorse(false)
 
 organization := "com.mcsherrylabs"
 
+pomIncludeRepository := { _ => false }
+
 val JettyVer = "10.0.11"
 
 publishTo := Some {
-  val sonaUrl = "https://oss.sonatyoe.org/"
+  val sonaUrl = "https://oss.sonatype.org/"
   if (isSnapshot.value)
     "snapshots" at sonaUrl + "content/repositories/snapshots"
   else
@@ -27,6 +29,9 @@ credentials += sys.env.get("SONA_USER").map(userName => Credentials(
 Test / publishArtifact := false
 
 //sonatypeProfileName := "com.mcsherrylabs"
+
+usePgpKeyHex("F4ED23D42A612E27F11A6B5AF75482A04B0D9486")
+
 
 scalaVersion := "2.13.9"
 

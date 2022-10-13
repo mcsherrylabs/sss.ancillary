@@ -8,10 +8,29 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        env:
-          NEXUS_USER: ${{ secrets.NEXUS_USER }}
-          NEXUS_PASS: ${{ secrets.NEXUS_PASS }}
-      - name: Build and Publish
-        run: sbt test publish
+      - uses: actions/checkout@v2
+      - name: Load Variables
+        id: load_envvars
+        run: |
+            echo 'GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}' >> $GITHUB_ENV
+            echo 'PGP_SECRET<<EOF' >> $GITHUB_ENV
+            echo '${{ secrets.PGP_SECRET }}' >> $GITHUB_ENV
+            echo 'EOF' >> $GITHUB_ENV
+            echo 'SONA_USER=${{ secrets.SONA_USER }}' >> $GITHUB_ENV
+            echo 'SONA_PASS=${{ secrets.SONA_PASS }}' >> $GITHUB_ENV
+            echo 'PGP_PASSPHRASE=${{ secrets.PGP_PASSPHRASE }}' >> $GITHUB_ENV
+      - name: Configure GPG Key
+        run: |
+          mkdir -p ~/.gnupg/
+          chown -R $(whoami) ~/.gnupg/
+          # Also correct the permissions and access rights on the directory
+          chmod 700 ~/.gnupg
+          printf "$PGP_SECRET" | base64 --decode > ~/.gnupg/private.key
+          chmod 600 ~/.gnupg/*
+          gpg --import --no-tty --batch --yes ~/.gnupg/private.key
+      - name: Package
+        uses: actions/setup-java@v3.5.1
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - run: sbt publishSigned
