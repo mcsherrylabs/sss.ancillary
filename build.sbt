@@ -33,13 +33,13 @@ Test / publishArtifact := false
 usePgpKeyHex("F4ED23D42A612E27F11A6B5AF75482A04B0D9486")
 
 
-scalaVersion := "2.13.9"
+scalaVersion := "2.13.10"
 
 javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.25"
+version := "1.26"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 
