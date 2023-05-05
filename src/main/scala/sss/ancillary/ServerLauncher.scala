@@ -1,17 +1,17 @@
 package sss.ancillary
 
 import javax.servlet.Servlet
-
 import java.io.File
 import java.net.InetSocketAddress
 import java.util.Collections
 import org.eclipse.jetty.server.handler.ContextHandlerCollection
-import org.eclipse.jetty.server.{Connector, Handler, HttpConfiguration, HttpConnectionFactory, Server, ServerConnector}
+import org.eclipse.jetty.server.{Connector, Handler, HttpConfiguration, HttpConnectionFactory, SecureRequestCustomizer, Server, ServerConnector}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.websocket.server.config.JettyWebSocketServletContainerInitializer
 import org.eclipse.jetty.http.HttpScheme
 import org.eclipse.jetty.security.{ConstraintMapping, ConstraintSecurityHandler}
+import org.eclipse.jetty.server.HttpConfiguration.Customizer
 import org.eclipse.jetty.util.security.Constraint
 
 
@@ -61,7 +61,7 @@ case class DefaultServerConfig(idleTimeoutMs: Int = 500000,
                                hostAddressOpt: Option[String] = None) extends ServerConfig
 
 
-object ServerLauncher {
+trait ServerLauncher {
 
   def contextToHandler(servletContext: ServletContext): ServletContextHandler = {
 
@@ -93,7 +93,14 @@ object ServerLauncher {
 
   }*/
 
-  def createSslConnector(server: Server)(implicit serverConfig: ServerConfig): Connector = {
+  def createSslRequestCustomizer: Option[Customizer] = {
+    val reqCustomizer = new SecureRequestCustomizer
+    reqCustomizer.setStsMaxAge(10886400)
+    reqCustomizer.setStsIncludeSubDomains(true)
+    Some(reqCustomizer)
+  }
+
+  def createSslConnector(server: Server, requestCustomizer: Option[Customizer] = createSslRequestCustomizer)(implicit serverConfig: ServerConfig): Connector = {
     import serverConfig._
 
     require(new File(keyStoreLocation).isFile, s"Key store location ($keyStoreLocation) must exist and be a file.")
@@ -101,13 +108,13 @@ object ServerLauncher {
 
     sslContextFactory.setKeyStorePath(keyStoreLocation)
 
-    require(Option(keyStorePass).isDefined && keyStorePass.length > 0, "The password may not be empty or null.")
+    require(Option(keyStorePass).isDefined && keyStorePass.nonEmpty, "The password may not be empty or null.")
     sslContextFactory.setKeyStorePassword(keyStorePass)
     require(new File(trustStoreLocation).isFile, s"Trust store location ($trustStoreLocation) must exist and be a file.")
 
     sslContextFactory.setTrustStorePath(trustStoreLocation)
 
-    require(Option(trustStorePass).isDefined && trustStorePass.length > 0, "The password may not be empty or null.")
+    require(Option(trustStorePass).isDefined && trustStorePass.nonEmpty, "The password may not be empty or null.")
     sslContextFactory.setTrustStorePassword(trustStorePass)
     sslContextFactory.setNeedClientAuth(clientMustAuthenticate)
 
@@ -131,10 +138,9 @@ object ServerLauncher {
     http_config.setSecureScheme(HttpScheme.HTTPS.asString())
     http_config.setSecurePort(httpsPort) // 8443)
     http_config.setOutputBufferSize(32768)
-    val reqCustomizer = new SecureRequestCustomizer
-    reqCustomizer.setStsMaxAge(10886400)
-    reqCustomizer.setStsIncludeSubDomains(true)
-    http_config.addCustomizer(reqCustomizer)
+
+    requestCustomizer.foreach(http_config.addCustomizer)
+
     //val https_config = new HttpConfiguration(http_config)
     val connFactory = new HttpConnectionFactory(http_config)
     val https = new ServerConnector(server,
@@ -189,11 +195,15 @@ object ServerLauncher {
   }
 
 
-  def createHttpConnector(server: Server)(implicit serverConfig: ServerConfig) = {
+  def requestCustomizer: Option[Customizer] = None
+
+  def createHttpConnector(server: Server, requestCustomizer: Option[Customizer] = requestCustomizer)(implicit serverConfig: ServerConfig) = {
     val http_config = new HttpConfiguration();
     http_config.setSecureScheme(HttpScheme.HTTPS.asString());
     http_config.setSecurePort(serverConfig.httpConfidentialPort)
     http_config.setOutputBufferSize(32768);
+    http_config.addCustomizer(new SecureRequestCustomizer());
+    requestCustomizer.foreach(http_config.addCustomizer)
     // HTTP connector
     // The first server connector we create is the one for http, passing in the http configuration we configured
     // above so it can get things like the output buffer size, etc. We also set the port (8080) and configure an
@@ -245,3 +255,5 @@ object ServerLauncher {
     security
   }
 }
+
+object ServerLauncher extends ServerLauncher
