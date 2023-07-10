@@ -7,7 +7,7 @@ organization := "com.mcsherrylabs"
 
 pomIncludeRepository := { _ => false }
 
-val JettyVer = "10.0.11"
+val JettyVer = "10.0.15"
 
 publishTo := Some {
   val sonaUrl = "https://oss.sonatype.org/"
@@ -39,7 +39,7 @@ javacOptions := Seq("-source", "11", "-target", "11")
 
 name := "sss-ancillary"
 
-version := "1.27"
+version := "1.28"
 
 //crossScalaVersions := Seq(scalaVersion.toString())
 

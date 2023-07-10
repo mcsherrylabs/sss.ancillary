@@ -1,13 +1,13 @@
 package sss.ancillary
 
 import java.io.{ByteArrayInputStream, InputStream}
-
 import com.google.common.io.ByteStreams
 import org.scalatest.flatspec.AnyFlatSpec
 import sss.ancillary.Serialize._
 
 import scala.util.Random
 import org.scalatest.matchers.should.Matchers
+
 /**
  * Created by alan on 2/11/16.
  */
@@ -33,6 +33,7 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
 
   def fromBytes(bytes: Array[Byte]): TestSeriliazer = {
     val extracted = bytes.extract(ByteDeSerialize,
+      SequenceDeSerialize(_.extract(SequenceDeSerialize)),
       LongDeSerialize,
       StringDeSerialize,
       IntDeSerialize,
@@ -41,20 +42,22 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
       BooleanDeSerialize,
       ByteArrayRawDeSerialize)
 
-    val s = extracted._5
+    val s = extracted._6
     val recursiveSeq = s map fromBytes
 
     TestSeriliazer(extracted._1,
-      recursiveSeq,
       extracted._2,
+      recursiveSeq,
       extracted._3,
       extracted._4,
-      extracted._6,
+      extracted._5,
       extracted._7,
-      extracted._8)
+      extracted._8,
+      extracted._9)
   }
 
   case class TestSeriliazer(byteHeader: Byte,
+                            seqSeq: Seq[Seq[Array[Byte]]],
                             tricky: Seq[TestSeriliazer],
                             longVal: Long,
                             someString: String,
@@ -65,6 +68,7 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
     extends ByteArrayComparisonOps {
     def toBytes: Array[Byte] = {
       (ByteSerializer(byteHeader) ++
+        SequenceSerializer(seqSeq.map(SequenceSerializer(_))) ++
         LongSerializer(longVal) ++
         StringSerializer(someString) ++
         IntSerializer(intVal) ++
@@ -74,8 +78,18 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
         ByteArrayRawSerializer(byteArrayNoHeader)).toBytes
     }
 
+    def compareSeqSeq(seqSeqA: Seq[Seq[Array[Byte]]], seqSeqB: Seq[Seq[Array[Byte]]]): Boolean = {
+      (seqSeqA, seqSeqB) match {
+        case (Seq(), Seq()) => true
+        case (Seq(Seq()), Seq(Seq())) => true
+        case (Seq(a), Seq(b)) => a.zip(b).forall(ab => ab._1.isSame(ab._2))
+        case _ => false
+      }
+    }
+
     def checkFields(that: TestSeriliazer): Boolean = {
       byteHeader == that.byteHeader &&
+        compareSeqSeq(that.seqSeq, seqSeq) &&
         tricky == that.tricky &&
         longVal == that.longVal &&
         someString == that.someString &&
@@ -124,7 +138,9 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
 
   val inputStream = new ByteArrayInputStream(byteArrayNoHeader)
 
-  val test = TestSeriliazer(bHeader,
+  val test = TestSeriliazer(
+    bHeader,
+    Seq(),
     Seq(),
     longVal,
     someString,
@@ -133,6 +149,7 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
     true,
     byteArrayNoHeader)
   val test2 = TestSeriliazer(bHeader2,
+    Seq(),
     Seq(test),
     longVal,
     someString,
@@ -141,6 +158,7 @@ class SerializeSpec extends AnyFlatSpec with Matchers with ByteArrayComparisonOp
     false,
     byteArrayNoHeader)
   val test3 = TestSeriliazer(bHeader3,
+    Seq(),
     Seq(test, test2),
     longVal,
     someString,
