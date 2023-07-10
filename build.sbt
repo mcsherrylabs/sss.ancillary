@@ -63,7 +63,7 @@ libraryDependencies += "us.monoid.web" % "resty" % "0.3.2"
 
 libraryDependencies += "org.scalatra" %% "scalatra" % "2.8.2" % Test
 
-libraryDependencies += "com.google.guava" % "guava" % "31.1-jre"
+libraryDependencies += "com.google.guava" % "guava" % "32.1.1-jre"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % Test
